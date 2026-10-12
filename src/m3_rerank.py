@@ -23,14 +23,20 @@ class RerankResult:
 
 
 class CrossEncoderReranker:
-    def __init__(self, model_name: str = "BAAI/bge-reranker-v2-m3"):
+    def __init__(self, model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"):
         self.model_name = model_name
         self._model = None
 
     def _load_model(self):
         if self._model is None:
             from sentence_transformers import CrossEncoder
-            self._model = CrossEncoder(self.model_name)
+            try:
+                self._model = CrossEncoder(self.model_name, local_files_only=True)
+            except Exception:
+                try:
+                    self._model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", local_files_only=True)
+                except Exception:
+                    self._model = CrossEncoder(self.model_name)
         return self._model
 
     def rerank(self, query: str, documents: list[dict], top_k: int = RERANK_TOP_K) -> list[RerankResult]:

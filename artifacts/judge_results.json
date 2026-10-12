@@ -1,0 +1,252 @@
+{
+  "metadata": {
+    "format_version": 2,
+    "run_kind": "live",
+    "models": {
+      "generation": [
+        "gemini-3.8-flash-n"
+      ],
+      "evaluator": [],
+      "judge": [
+        "gpt-4o-mini"
+      ],
+      "guard": []
+    },
+    "created_at": "2026-10-12T12:49:05.175237+00:00",
+    "source_sha256": {
+      "answers_50q.json": "4ff71f6a6ca2a19973db1c5f55b42b499823ccd6958d155307d9d2ad9a83a441",
+      "test_set_50q.json": "0e87f26e020a32c62ea0864940720618f39600b9d3378193704cf2f86e88446d",
+      "human_labels_10q.json": "e72338bd99c3d0165348c11997735bbb87c978fe018c24dfd29c9801d5c2b2c1"
+    }
+  },
+  "pair_sources": {
+    "A": "artifacts/answers_50q.json:answer",
+    "B": "fixtures/human_labels_10q.json:model_answer",
+    "reference": "fixtures/test_set_50q.json:ground_truth"
+  },
+  "pairwise_results": [
+    {
+      "question_id": 1,
+      "question": "Nhân viên được nghỉ bao nhiêu ngày khi kết hôn?",
+      "answer_a": "Không tìm thấy.",
+      "answer_b": "Nhân viên được nghỉ 3 ngày làm việc có lương khi kết hôn.",
+      "winner_pass1": "B",
+      "winner_pass2": "B",
+      "final_winner": "B",
+      "reasoning_pass1": "Answer B trả lời chính xác, súc tích và đúng trọng tâm câu hỏi dựa trên thông tin tham chiếu. Answer A không cung cấp được câu trả lời.",
+      "reasoning_pass2": "Answer A trả lời chính xác, ngắn gọn và trực tiếp câu hỏi theo chính sách tham chiếu. Answer B không tìm thấy thông tin dù dữ liệu có sẵn.",
+      "position_consistent": true,
+      "scores_pass1": {
+        "A": 0.0,
+        "B": 0.95
+      },
+      "scores_pass2": {
+        "A": 0.0,
+        "B": 0.95
+      }
+    },
+    {
+      "question_id": 5,
+      "question": "Muốn mua thiết bị trị giá 55 triệu cần ai phê duyệt?",
+      "answer_a": "Không tìm thấy.",
+      "answer_b": "Cần Giám đốc phòng ban phê duyệt.",
+      "winner_pass1": "A",
+      "winner_pass2": "A",
+      "final_winner": "A",
+      "reasoning_pass1": "Answer B cung cấp thông tin hoàn toàn sai lệch (cần CEO phê duyệt thay vì Giám đốc phòng ban), gây rủi ro cao. Answer A tuy không trả lời được câu hỏi nhưng an toàn hơn vì tránh được lỗi ảo giác (hallucination).",
+      "reasoning_pass2": "Answer A đưa ra thông tin hoàn toàn sai lệch (Giám đốc phòng ban thay vì Tổng Giám đốc), tiềm ẩn rủi ro lớn trong quy trình phê duyệt. Answer B tuy không trả lời được nhưng an toàn hơn vì không tạo ra ảo giác (hallucination).",
+      "position_consistent": true,
+      "scores_pass1": {
+        "A": 0.3,
+        "B": 0.0
+      },
+      "scores_pass2": {
+        "A": 0.2,
+        "B": 0.0
+      }
+    },
+    {
+      "question_id": 12,
+      "question": "Thưởng Tết tối thiểu cho nhân viên chính thức có từ 6 tháng trở lên là bao nhiêu?",
+      "answer_a": "Thưởng Tết tối thiểu cho nhân viên chính thức có thời gian làm việc từ 6 tháng trở lên là **1 tháng lương**.",
+      "answer_b": "Nhân viên được thưởng Tết tối thiểu 1 tháng lương.",
+      "winner_pass1": "A",
+      "winner_pass2": "A",
+      "final_winner": "A",
+      "reasoning_pass1": "Answer A chính xác và đầy đủ ngữ cảnh điều kiện (nhân viên chính thức từ 6 tháng trở lên), trong khi Answer B khái quát hóa quá mức, thiếu điều kiện đối tượng cụ thể theo câu hỏi.",
+      "reasoning_pass2": "Answer B trả lời chính xác, đầy đủ ngữ cảnh và điều kiện được nêu trong câu hỏi (nhân viên chính thức có từ 6 tháng trở lên). Answer A phát biểu quá chung chung, có thể gây hiểu nhầm rằng mọi nhân viên đều được tối thiểu 1 tháng lương.",
+      "position_consistent": true,
+      "scores_pass1": {
+        "A": 1.0,
+        "B": 0.6
+      },
+      "scores_pass2": {
+        "A": 1.0,
+        "B": 0.7
+      }
+    },
+    {
+      "question_id": 21,
+      "question": "Một nhân viên Senior có 9 năm thâm niên được nghỉ bao nhiêu ngày phép năm và lương trong khoảng nào?",
+      "answer_a": "Theo context:\n- Nhân viên có 9 năm thâm niên được 18 ngày phép năm.\n- Thông tin về cấp bậc \"Senior\" và mức lương: Không tìm thấy.",
+      "answer_b": "Được nghỉ 18 ngày phép (15 cơ bản + 3 thâm niên). Lương Senior từ 20 đến 35 triệu.",
+      "winner_pass1": "B",
+      "winner_pass2": "B",
+      "final_winner": "B",
+      "reasoning_pass1": "Answer B trả lời đầy đủ và chính xác cả hai ý hỏi (số ngày phép kèm cách tính và khoảng lương Senior), trong khi Answer A thiếu thông tin về mức lương.",
+      "reasoning_pass2": "Answer A trả lời đầy đủ, chính xác cả hai ý hỏi (số ngày phép là 18 và dải lương Senior từ 20-35 triệu) theo đúng đáp án tham chiếu. Answer B thiếu thông tin về mức lương Senior.",
+      "position_consistent": true,
+      "scores_pass1": {
+        "A": 0.5,
+        "B": 1.0
+      },
+      "scores_pass2": {
+        "A": 0.5,
+        "B": 1.0
+      }
+    },
+    {
+      "question_id": 41,
+      "question": "Nhân viên được nghỉ bao nhiêu ngày phép năm?",
+      "answer_a": "Không tìm thấy.",
+      "answer_b": "Nhân viên được nghỉ 12 ngày phép năm.",
+      "winner_pass1": "A",
+      "winner_pass2": "A",
+      "final_winner": "A",
+      "reasoning_pass1": "Answer B cung cấp thông tin sai lệch do sử dụng chính sách v2023 đã hết hiệu lực thay vì chính sách v2024 hiện hành (15 ngày cơ bản). Answer A tuy không trả lời được nhưng an toàn hơn việc đưa ra thông tin sai lệch gây hiểu lầm cho nhân viên.",
+      "reasoning_pass2": "Answer A cung cấp thông tin sai lệch/lỗi thời dựa trên chính sách cũ v2023 thay vì chính sách hiện hành v2024 (15 ngày). Answer B tuy không trả lời được câu hỏi nhưng an toàn hơn vì tránh đưa ra thông tin sai gây hiểu lầm.",
+      "position_consistent": true,
+      "scores_pass1": {
+        "A": 0.2,
+        "B": 0.0
+      },
+      "scores_pass2": {
+        "A": 0.3,
+        "B": 0.1
+      }
+    }
+  ],
+  "binary_judgments": [
+    {
+      "question_id": 1,
+      "question": "Nhân viên được nghỉ bao nhiêu ngày khi kết hôn?",
+      "model_answer": "Nhân viên được nghỉ 3 ngày làm việc có lương khi kết hôn.",
+      "label": 1,
+      "reasoning": "Câu trả lời hoàn toàn chính xác và trả lời đầy đủ ý hỏi của câu hỏi dựa trên thông tin trong tài liệu tham khảo."
+    },
+    {
+      "question_id": 5,
+      "question": "Muốn mua thiết bị trị giá 55 triệu cần ai phê duyệt?",
+      "model_answer": "Cần Giám đốc phòng ban phê duyệt.",
+      "label": 0,
+      "reasoning": "Câu trả lời sai so với tài liệu tham chiếu. Thiết bị trị giá 55 triệu (trên 50.000.000 VNĐ) cần Tổng Giám đốc (CEO) phê duyệt, không phải Giám đốc phòng ban."
+    },
+    {
+      "question_id": 12,
+      "question": "Thưởng Tết tối thiểu cho nhân viên chính thức có từ 6 tháng trở lên là bao nhiêu?",
+      "model_answer": "Nhân viên được thưởng Tết tối thiểu 1 tháng lương.",
+      "label": 1,
+      "reasoning": "Câu trả lời nêu chính xác mức thưởng Tết tối thiểu là 1 tháng lương theo đúng thông tin trong tài liệu tham khảo."
+    },
+    {
+      "question_id": 21,
+      "question": "Một nhân viên Senior có 9 năm thâm niên được nghỉ bao nhiêu ngày phép năm và lương trong khoảng nào?",
+      "model_answer": "Được nghỉ 18 ngày phép (15 cơ bản + 3 thâm niên). Lương Senior từ 20 đến 35 triệu.",
+      "label": 1,
+      "reasoning": "Câu trả lời hoàn toàn chính xác và đầy đủ các thông tin theo tham chiếu (18 ngày phép và mức lương 20 - 35 triệu)."
+    },
+    {
+      "question_id": 23,
+      "question": "Nhân viên được tài trợ khóa học 25 triệu, nghỉ việc sau 8 tháng. Phải hoàn trả bao nhiêu?",
+      "model_answer": "Hoàn trả 25 triệu vì chưa đủ 1 năm cam kết.",
+      "label": 1,
+      "reasoning": "Câu trả lời chính xác số tiền cần hoàn trả (25 triệu) và lý do (chưa đủ 1 năm cam kết) theo đúng thông tin trong tài liệu tham khảo."
+    },
+    {
+      "question_id": 29,
+      "question": "Nhân viên tạm ứng 8 triệu, chưa thanh toán sau 30 ngày. Ai phê duyệt và phí phạt là bao nhiêu?",
+      "model_answer": "Trưởng phòng phê duyệt. Phạt 2% tháng trên 8 triệu.",
+      "label": 0,
+      "reasoning": "Câu trả lời thiếu người phê duyệt là Kế toán trưởng (cần cả Trưởng phòng và Kế toán trưởng) và chưa nêu cụ thể số tiền phạt theo quy định trong tài liệu tham khảo."
+    },
+    {
+      "question_id": 33,
+      "question": "Nhân viên Manager có thâm niên 12 năm: tổng phụ cấp hàng tháng và số ngày phép năm?",
+      "model_answer": "Phép: 19 ngày. Phụ cấp: 1.500.000 VNĐ/tháng.",
+      "label": 1,
+      "reasoning": "Câu trả lời cung cấp chính xác và đầy đủ cả hai ý về tổng phụ cấp hàng tháng (1.500.000 VNĐ/tháng) và số ngày phép năm (19 ngày) theo đúng thông tin từ reference."
+    },
+    {
+      "question_id": 41,
+      "question": "Nhân viên được nghỉ bao nhiêu ngày phép năm?",
+      "model_answer": "Nhân viên được nghỉ 12 ngày phép năm.",
+      "label": 0,
+      "reasoning": "Câu trả lời sử dụng số liệu từ chính sách cũ (v2023) đã bị thay thế thay vì chính sách hiện hành (v2024) là 15 ngày."
+    },
+    {
+      "question_id": 46,
+      "question": "Nhân viên thử việc có được nghỉ phép năm không?",
+      "model_answer": "Nhân viên thử việc không được nghỉ phép năm và phải xin nghỉ không lương nếu cần.",
+      "label": 1,
+      "reasoning": "Câu trả lời trả lời chính xác ý cốt lõi của câu hỏi dựa trên reference: nhân viên thử việc không được nghỉ phép năm và có thể xin nghỉ không lương nếu cần."
+    },
+    {
+      "question_id": 50,
+      "question": "Nhân viên Manager có thể dùng VPN cá nhân (NordVPN) khi WFH không?",
+      "model_answer": "Được, miễn là đảm bảo kết nối an toàn.",
+      "label": 0,
+      "reasoning": "Câu trả lời sai hoàn toàn so với tài liệu tham khảo (cho phép trong khi chính sách cấm sử dụng VPN cá nhân như NordVPN)."
+    }
+  ],
+  "calibration": {
+    "question_ids": [
+      1,
+      5,
+      12,
+      21,
+      23,
+      29,
+      33,
+      41,
+      46,
+      50
+    ],
+    "judge_labels": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    "human_labels": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    "cohen_kappa": 1.0
+  },
+  "bias_report": {
+    "total_judged": 5,
+    "position_bias_rate": 0.0,
+    "position_bias_count": 0,
+    "verbosity_bias": 0.4,
+    "verbosity_details": {
+      "a_wins_a_longer": 1,
+      "b_wins_b_longer": 1,
+      "total_decisive": 5
+    },
+    "interpretation": "Position bias thấp — judge ổn định."
+  }
+}

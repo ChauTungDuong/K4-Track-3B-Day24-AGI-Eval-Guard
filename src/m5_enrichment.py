@@ -157,35 +157,7 @@ def extract_metadata(text: str) -> dict:
 
 
 def _enrich_single_call(text: str, source: str) -> dict:
-    """Single LLM call to get summary + questions + context + metadata.
-
-    ⚠️ Cost optimization: 1 API call thay vì 4 calls riêng lẻ.
-    """
-    from config import OPENAI_API_KEY
-    if OPENAI_API_KEY:
-        try:
-            import json as _json
-            from openai import OpenAI
-            client = OpenAI()
-            resp = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": """Phân tích đoạn văn và trả về JSON:
-{
-  "summary": "tóm tắt 2-3 câu",
-  "questions": ["câu hỏi 1", "câu hỏi 2", "câu hỏi 3"],
-  "context": "1 câu mô tả đoạn văn nằm ở đâu trong tài liệu",
-  "metadata": {"topic": "...", "entities": ["..."], "category": "policy|hr|it|finance", "language": "vi|en"}
-}"""},
-                    {"role": "user", "content": f"Tài liệu: {source}\n\nĐoạn văn:\n{text}"},
-                ],
-                max_tokens=400,
-                response_format={"type": "json_object"}
-            )
-            return _json.loads(resp.choices[0].message.content)
-        except Exception as e:
-            print(f"  ⚠️  Enrichment API failed: {e}")
-
+    """Fast extraction to get summary + questions + context + metadata."""
     sentences = [s.strip() for s in text.replace("\n", " ").split(". ") if s.strip()]
     summary = ". ".join(sentences[:2]) + "." if sentences else text
     context = f"Trích từ {source}." if source else "Trích từ quy chế nội bộ."
@@ -208,39 +180,22 @@ def enrich_chunks(
     methods: list[str] | None = None,
 ) -> list[EnrichedChunk]:
     """
-    Chạy enrichment pipeline trên danh sách chunks. (Đã implement sẵn — dùng functions ở trên)
-
-    Có 2 chế độ:
-    - methods cụ thể (["summary"], ["contextual"]...): gọi từng function riêng (tốt cho học/debug)
-    - methods=["combined"] hoặc None: 1 API call duy nhất cho tất cả (tốt cho production)
-
-    Args:
-        chunks: List of {"text": str, "metadata": dict}
-        methods: Default None → combined mode (1 call/chunk).
-                 Options: "summary", "hyqa", "contextual", "metadata", "combined"
+    Chạy enrichment pipeline trên danh sách chunks.
     """
     if methods is None:
         methods = ["combined"]
 
     use_combined = "combined" in methods
-
     enriched = []
-    for i, chunk in enumerate(chunks):
+    for chunk in chunks:
         text = chunk["text"]
         source = chunk.get("metadata", {}).get("source", "")
-
-        if use_combined:
-            result = _enrich_single_call(text, source)
-            summary = result.get("summary", "")
-            questions = result.get("questions", [])
-            context_line = result.get("context", "")
-            enriched_text = f"{context_line}\n\n{text}" if context_line else text
-            auto_meta = result.get("metadata", {})
-        else:
-            summary = summarize_chunk(text) if "summary" in methods else ""
-            questions = generate_hypothesis_questions(text) if "hyqa" in methods else []
-            enriched_text = contextual_prepend(text, source) if "contextual" in methods else text
-            auto_meta = extract_metadata(text) if "metadata" in methods else {}
+        result = _enrich_single_call(text, source)
+        summary = result.get("summary", "")
+        questions = result.get("questions", [])
+        context_line = result.get("context", "")
+        enriched_text = f"{context_line}\n\n{text}" if context_line else text
+        auto_meta = result.get("metadata", {})
 
         enriched.append(EnrichedChunk(
             original_text=text,
@@ -251,9 +206,7 @@ def enrich_chunks(
             method="+".join(methods),
         ))
 
-        if (i + 1) % 10 == 0 or (i + 1) == len(chunks):
-            print(f"  Enriched {i + 1}/{len(chunks)} chunks...", flush=True)
-
+    print(f"  ✓ Enriched {len(enriched)} chunks...", flush=True)
     return enriched
 
 

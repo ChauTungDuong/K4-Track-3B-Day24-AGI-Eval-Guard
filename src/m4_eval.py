@@ -40,7 +40,7 @@ def evaluate_ragas(questions: list[str], answers: list[str],
         "context_precision": 0.0,
         "context_recall": 0.0,
         "metadata": {
-            "evaluator_models": ["gpt-4o-mini", "text-embedding-ada-002"],
+            "evaluator_models": ["BAAI/bge-m3", "gpt-4o-mini"],
         },
         "per_question": [
             EvalResult(
@@ -61,9 +61,22 @@ def evaluate_ragas(questions: list[str], answers: list[str],
         return zeros
 
     try:
+        import math
+        import torch
         from ragas import evaluate
         from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
         from datasets import Dataset
+
+        class LocalBgeEmbeddings:
+            def __init__(self):
+                from src.m2_search import DenseSearch
+                self._enc = DenseSearch()._get_encoder()
+            def embed_query(self, text: str) -> list[float]:
+                return self._enc.encode(text).tolist()
+            def embed_documents(self, texts: list[str]) -> list[list[float]]:
+                return [v.tolist() for v in self._enc.encode(texts)]
+
+        local_emb = LocalBgeEmbeddings()
 
         dataset = Dataset.from_dict({
             "question": questions,
@@ -72,28 +85,41 @@ def evaluate_ragas(questions: list[str], answers: list[str],
             "ground_truth": ground_truths,
         })
         result = evaluate(dataset, metrics=[faithfulness, answer_relevancy,
-                                            context_precision, context_recall])
+                                            context_precision, context_recall],
+                          embeddings=local_emb)
         df = result.to_pandas()
+
+        def _clean(val):
+            if val is None:
+                return 0.0
+            try:
+                v = float(val)
+                if math.isnan(v) or not math.isfinite(v):
+                    return 0.0
+                return max(0.0, min(1.0, v))
+            except Exception:
+                return 0.0
+
         per_question = [
             EvalResult(
                 question=row["question"],
                 answer=row["answer"],
                 contexts=row["contexts"] if isinstance(row["contexts"], list) else [str(row["contexts"])],
                 ground_truth=row["ground_truth"],
-                faithfulness=float(row.get("faithfulness", 0.0) or 0.0),
-                answer_relevancy=float(row.get("answer_relevancy", 0.0) or 0.0),
-                context_precision=float(row.get("context_precision", 0.0) or 0.0),
-                context_recall=float(row.get("context_recall", 0.0) or 0.0)
+                faithfulness=_clean(row.get("faithfulness")),
+                answer_relevancy=_clean(row.get("answer_relevancy")),
+                context_precision=_clean(row.get("context_precision")),
+                context_recall=_clean(row.get("context_recall"))
             )
             for _, row in df.iterrows()
         ]
         return {
-            "faithfulness": float(result.get("faithfulness", 0.0) or 0.0),
-            "answer_relevancy": float(result.get("answer_relevancy", 0.0) or 0.0),
-            "context_precision": float(result.get("context_precision", 0.0) or 0.0),
-            "context_recall": float(result.get("context_recall", 0.0) or 0.0),
+            "faithfulness": _clean(result.get("faithfulness")),
+            "answer_relevancy": _clean(result.get("answer_relevancy")),
+            "context_precision": _clean(result.get("context_precision")),
+            "context_recall": _clean(result.get("context_recall")),
             "metadata": {
-                "evaluator_models": ["gpt-4o-mini", "text-embedding-ada-002"],
+                "evaluator_models": ["BAAI/bge-m3", "gpt-4o-mini"],
             },
             "per_question": per_question
         }

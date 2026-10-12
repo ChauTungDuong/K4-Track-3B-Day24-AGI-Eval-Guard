@@ -124,7 +124,11 @@ class DenseSearch:
             import torch
             with torch.inference_mode():
                 query_vector = self._get_encoder().encode(query).tolist()
-            response = self.client.query_points(collection_name=collection, query=query_vector, limit=top_k)
+            if hasattr(self.client, "query_points"):
+                response = self.client.query_points(collection_name=collection, query=query_vector, limit=top_k)
+                points = response.points
+            else:
+                points = self.client.search(collection_name=collection, query_vector=query_vector, limit=top_k)
             return [
                 SearchResult(
                     text=pt.payload.get("text", ""),
@@ -132,7 +136,7 @@ class DenseSearch:
                     metadata=pt.payload,
                     method="dense"
                 )
-                for pt in response.points
+                for pt in points
             ]
         except Exception as e:
             print(f"  ⚠️  Dense search error: {e}")

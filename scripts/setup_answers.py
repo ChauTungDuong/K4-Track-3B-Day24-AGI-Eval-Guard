@@ -142,7 +142,7 @@ def main(argv=None):
     client = None
     if OPENAI_API_KEY:
         from openai import OpenAI
-        client = OpenAI()
+        client = OpenAI(timeout=15.0)
     t_start = time.time()
 
     for i, item in enumerate(test_set):
