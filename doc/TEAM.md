@@ -2,7 +2,7 @@
 
 Tên nhóm: AGI
 
-Repo chung: https://github.com/ChauTungDuong/K4-Track-3B-Day24-Eval-Guard
+Repo chung: https://github.com/ChauTungDuong/K4-Track-3B-Day24-AGI-Eval-Guard
 
 Trưởng nhóm/người nộp: Châu Tùng Dương - 2A202602822
 
