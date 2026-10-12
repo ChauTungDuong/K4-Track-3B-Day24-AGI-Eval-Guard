@@ -1,6 +1,6 @@
 # Nhóm thực hiện K4 Track 3B
 
-Tên nhóm: K4-EvalGuard-Team
+Tên nhóm: AGI
 
 Repo chung: https://github.com/ChauTungDuong/K4-Track-3B-Day24-Eval-Guard
 
