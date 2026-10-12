@@ -1,45 +1,40 @@
 # Phân tích lỗi Phase A
 
-Nhóm: {{Tên nhóm}}
+Nhóm: K4-EvalGuard-Team
 
-Người phụ trách: {{Họ tên và MSSV}}
+Người phụ trách: Nguyễn Đình Tuấn Anh - 2A202602735
 
-Nguồn: `artifacts/ragas_50q.json`; run timestamp: {{created_at}}.
-Generation mode/fallback và điều kiện chạy: {{Điều kiện thực tế}}.
-Models generation/evaluator: {{metadata.models.generation và metadata.models.evaluator từ m4}}.
+## Trạng thái thực nghiệm
 
-## Điểm theo distribution
+Phần code Tasks 1–4 đã hoàn thành và vượt qua 6 test offline. Bộ 50 câu được
+chia đúng thành factual 20, multi-hop 20 và adversarial 10. Adapter gửi nguyên
+question, answer, contexts và ground truth sang `m4.evaluate_ragas`, đồng thời
+giữ đúng model evaluator do m4 trả về.
 
-| Metric | factual (20) | multi_hop (20) | adversarial (10) |
-|---|---|---|---|
-| faithfulness | {{factual_faithfulness}} | {{multi_faithfulness}} | {{adversarial_faithfulness}} |
-| answer_relevancy | {{factual_relevancy}} | {{multi_relevancy}} | {{adversarial_relevancy}} |
-| context_precision | {{factual_precision}} | {{multi_precision}} | {{adversarial_precision}} |
-| context_recall | {{factual_recall}} | {{multi_recall}} | {{adversarial_recall}} |
-| avg_score | {{factual_mean}} | {{multi_mean}} | {{adversarial_mean}} |
+Workspace hiện chưa có `artifacts/answers_50q.json`, `.env` hoặc RAGAS runtime,
+nên chưa thể chạy batch live để tạo `artifacts/ragas_50q.json`. Báo cáo không
+điền điểm giả. Sau khi trưởng nhóm tạo answers thật, chạy:
 
-## Bottom 10 và nguyên nhân
+```bash
+python scripts/run_experiments.py --phase a --live
+```
 
-{{Điền đúng 10 rows từ Task 3: rank, id, question, distribution, avg_score,
-worst_metric, diagnosis và suggested_fix. Không thay diagnosis học viên bằng
-diagnosis mặc định của exporter.}}
+## Cách phân tích lỗi
 
-{{Đối chiếu answer/contexts/reference của ít nhất các câu đại diện cho nhóm lỗi;
-giải thích lỗi retrieval, generation, phiên bản hoặc phủ định bằng bằng chứng.}}
+Mỗi câu được xếp theo trung bình của bốn metric. Bottom 10 được sắp tăng dần và
+giữ đủ id, distribution, metric yếu nhất, chẩn đoán và hướng sửa. Matrix chỉ đếm
+metric thấp nhất của từng câu; distribution yếu được chọn bằng mean thấp nhất,
+không dựa vào nhóm nào có nhiều câu hơn.
 
-## Matrix và nhóm yếu nhất
+Nếu `context_recall` thấp, cần kiểm tra chunking và bổ sung BM25; nếu
+`context_precision` thấp, cần rerank hoặc lọc metadata. `faithfulness` thấp nên
+siết prompt sinh câu trả lời, còn `answer_relevancy` thấp cần chỉnh prompt theo
+đúng ý hỏi.
 
-{{Điền matrix 4 metric × 3 distributions. Mỗi câu được đếm theo worst_metric,
-không coi mọi câu là failure.}}
+## Giới hạn cần kiểm tra sau lượt live
 
-Nhóm yếu theo mean thấp nhất: {{distribution}}; mean: {{giá trị}}.
-Worst metric xuất hiện nhiều nhất: {{metric}}; số câu: {{số lượng}}.
-
-{{Giải thích vì sao nhóm đó yếu. Không dùng tổng 20/20/10 chọn dominant distribution.
-Đề xuất sửa cụ thể và cách chạy lại để biết sửa có hiệu quả.}}
-
-## Bẫy adversarial và giới hạn
-
-{{So sánh với factual/multi_hop, nêu version conflict/negation trong bottom 10.
-Điểm thấp hơn không tự chứng minh pipeline đã nhận ra bẫy. Ghi giới hạn số mẫu,
-model và fallback nếu có.}}
+Với nhóm adversarial, cần đọc trực tiếp answer, contexts và reference của từng
+câu Bottom 10 để phát hiện xung đột phiên bản hoặc câu hỏi phủ định. Điểm thấp
+không đủ để kết luận pipeline đã nhận ra bẫy. Khi artifact live có sẵn, báo cáo
+này cần bổ sung bảng điểm, đúng 10 dòng yếu nhất và bằng chứng từ các context
+đại diện trước khi nộp.
