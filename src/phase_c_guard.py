@@ -63,6 +63,12 @@ def pii_scan(text: str, analyzer=None, anonymizer=None) -> dict:
         analyzer, anonymizer = setup_presidio()
 
     results = analyzer.analyze(text=text, language=PRESIDIO_LANGUAGE)
+    # Presidio's predefined registry can also emit broad NLP entities such as
+    # PERSON, DATE_TIME, or ORGANIZATION.  Phase C only treats the explicitly
+    # scoped identifiers below as blocking PII; otherwise ordinary HR policy
+    # questions (years, leave durations, role names) become false positives.
+    blocking_entities = {"VN_CCCD", "VN_PHONE", "EMAIL_ADDRESS"}
+    results = [r for r in results if r.entity_type in blocking_entities]
     if not results:
         return {"has_pii": False, "entities": [], "anonymized": text}
 
